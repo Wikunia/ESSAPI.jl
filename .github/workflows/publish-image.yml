@@ -28,4 +28,4 @@ jobs:
         with:
           push: true
           platforms: linux/amd64
-          tags: wikunia/essapi.jl:${{ github.ref_name }}
+          tags: ghcr.io/wikunia/essapi.jl:${{ github.ref_name }}
