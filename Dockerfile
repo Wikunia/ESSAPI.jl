@@ -1,4 +1,4 @@
-FROM --platform=linux/arm64/v8 julia:1.9-bookworm
+FROM --platform=aarch64 julia:1.9-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
