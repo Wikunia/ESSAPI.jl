@@ -12,6 +12,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: set up qemu
         uses: docker/setup-qemu-action@v2
@@ -20,9 +23,9 @@ jobs:
       - name: login to github container registry
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: publish docker image
         uses: docker/build-push-action@v4
         with:
