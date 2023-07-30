@@ -17,9 +17,9 @@ VERIFY_TOKEN = ENV["VERIFY_TOKEN"]
 end
 
 @post "/subscribe" function(req::HTTP.Request)
-    params = queryparams(req)
+    data = json(req)
     open("data/$(now()).json", "w") do io
-        JSON3.pretty(io, params)
+        JSON3.pretty(io, data)
     end
     return "EVENT_RECEIVED"
 end
