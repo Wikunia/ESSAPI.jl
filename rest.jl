@@ -1,7 +1,8 @@
+using Dates
 import DotEnv
+using JSON3
 using Oxygen
 using HTTP
-using JSON3
 
 DotEnv.config()
 VERIFY_TOKEN = ENV["VERIFY_TOKEN"]
@@ -17,7 +18,7 @@ end
 
 @post "/subscribe" function(req::HTTP.Request)
     params = queryparams(req)
-    open("latest_data.json", "w") do io
+    open("data/$(now()).json", "w") do io
         JSON3.pretty(io, params)
     end
     return "EVENT_RECEIVED"
