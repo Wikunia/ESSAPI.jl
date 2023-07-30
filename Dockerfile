@@ -9,7 +9,7 @@ WORKDIR /app
 
 COPY Project.toml .
 
-RUN julia --project -e 'using Pkg; Pkg.instantiate(); Pkg.precompile();'
+RUN julia --project -e 'using Pkg; Pkg.instantiate()'
 
 COPY . .
 
