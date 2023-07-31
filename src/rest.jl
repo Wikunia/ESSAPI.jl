@@ -26,7 +26,9 @@ end
     open(joinpath(@__DIR__, "..", "data", "pushs", "$(now()).json"), "w") do io
         JSON3.pretty(io, data)
     end
-    @spawn add_activity(data[:owner_id], data[:object_id])
+    if data[:aspect_type] == "create" && data[:object_type] == "activity"
+        @spawn add_activity(data[:owner_id], data[:object_id])
+    end
     return "EVENT_RECEIVED"
 end
 
