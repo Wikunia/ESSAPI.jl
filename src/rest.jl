@@ -1,5 +1,6 @@
 using Dates
 import DotEnv
+using Printf
 using JSON3
 using Oxygen
 using HTTP
@@ -25,7 +26,7 @@ end
     open(joinpath(@__DIR__, "..", "data", "pushs", "$(now()).json"), "w") do io
         JSON3.pretty(io, data)
     end
-    @spawn download_activity(data[:owner_id], data[:object_id])
+    @spawn add_activity(data[:owner_id], data[:object_id])
     return "EVENT_RECEIVED"
 end
 

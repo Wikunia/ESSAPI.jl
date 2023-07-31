@@ -18,20 +18,19 @@ function get_access_token(user_id)
     return result[:access_token]
 end
 
-function get_start_time(access_token, activity_id)
+function get_activity_data(access_token, activity_id)
     url = "https://www.strava.com/api/v3/activities/$activity_id"
 
     headers = Dict("Authorization" => "Bearer $access_token", "Content-Type" => "application/json")
 
     r = HTTP.request("GET", url, headers)
     json_result = JSON3.read(String(r.body))
-    return json_result[:start_date]
+    return json_result
 end
 
 download_activity(user_id::Int, activity_id) = download_activity(user_id, get_access_token(user_id), activity_id)
 
-function download_activity(user_id, access_token, activity_id)
-    start_time = get_start_time(access_token, activity_id)
+function download_activity(user_id, access_token, activity_id, start_time)
     url = "https://www.strava.com/api/v3/activities/$activity_id/streams?keys=latlng,time"
 
     headers = Dict("Authorization" => "Bearer $access_token", "Content-Type" => "application/json")
@@ -54,4 +53,31 @@ function download_activity(user_id, access_token, activity_id)
     open(path, "w") do io
         JSON3.pretty(io, save_data)
     end
+end
+
+function set_activity_fields(access_token, activity_id, payload)
+    url = "https://www.strava.com/api/v3/activities/$activity_id"
+    headers = Dict("Authorization" => "Bearer $access_token", "Content-Type" => "application/json")
+
+    r = HTTP.request("PUT", url,
+                    headers,
+                    JSON3.write(payload))
+
+    result = JSON3.read(String(r.body))
+    return result
+end
+
+function prepend_activity_description(access_token, activity_data, str)
+    new_desc = "$str\n$(activity_data[:description])"
+    set_activity_fields(access_token, activity_data[:id], Dict(:description => strip(new_desc)))
+end
+
+function add_activity(user_id, activity_id)
+    access_token = get_access_token(user_id)
+    activity_data = get_activity_data(access_token, activity_id)
+    start_time = activity_data[:start_date]
+    download_activity(user_id, access_token, activity_id, start_time)
+    travelled_distance_km = activity_data[:distance]/1000
+    travelled_distance_str = @sprintf "Travel distance: %.2f km" travelled_distance_km 
+    prepend_activity_description(access_token, activity_data, travelled_distance_str)
 end
