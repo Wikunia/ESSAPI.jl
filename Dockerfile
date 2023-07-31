@@ -13,6 +13,6 @@ RUN julia --project -e 'using Pkg; Pkg.instantiate()'
 
 COPY . .
 
-CMD ["julia", "--project", "rest.jl"]
+CMD ["julia", "--project", "src/rest.jl"]
 
 EXPOSE 8000/tcp
