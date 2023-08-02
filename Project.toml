@@ -1,7 +1,9 @@
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DotEnv = "4dc1fcf4-5e3b-5448-94ab-0c38ec0385c1"
+EverySingleStreet = "9a55513a-1f47-4b8f-a8c7-9585ec10e442"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 Oxygen = "df9a0d86-3283-4920-82dc-4555fc0d1d8b"
 

@@ -1,6 +1,6 @@
 function get_access_token(user_id)
     url = "https://www.strava.com/oauth/token"
-    refresh_token = readjson(joinpath(@__DIR__, "..", "data", "tokens", "$user_id.json"))[:refresh_token]
+    refresh_token = readjson(joinpath(@__DIR__, "..", "data", "user_data", "$user_id.json"))[:refresh_token]
 
     payload = Dict(
         "client_id" => ENV["CLIENT_ID"],
@@ -81,7 +81,15 @@ function add_activity(user_id, activity_id)
     activity_data = get_activity_data(access_token, activity_id)
     start_time = activity_data[:start_date]
     download_activity(user_id, access_token, activity_id, start_time)
-    travelled_distance_km = activity_data[:distance]/1000
-    travelled_distance_str = @sprintf "Travel distance: %.2f km" travelled_distance_km 
-    prepend_activity_description(access_token, activity_data, travelled_distance_str)
+
+    activity_path = joinpath(@__DIR__, "..", "data", "activities", "$user_id", "$activity_id.json")
+    user_data = readjson(joinpath(@__DIR__, "..", "data", "user_data", "$user_id.json"))
+    city_data_path = joinpath(@__DIR__, "..", "data", "city_data", "$user_id", "$(user_data[:city_name]).jld2")
+    city_data = load(city_data_path)
+    data = EverySingleStreet.map_matching(activity_path, city_data["ways"], city_data["walked_parts"], "tmp_local_map.json")
+
+    added_kms_str = @sprintf "Added road kms: %.2f km" data.added_kms
+    save(city_data_path, Dict("ways" => city_data["ways"], "walked_parts" => data.walked_parts))
+
+    prepend_activity_description(access_token, activity_data, added_kms_str)
 end

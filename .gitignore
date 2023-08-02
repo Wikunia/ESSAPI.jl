@@ -19,3 +19,6 @@ docs/site/
 
 .env
 data/**/*.json
+data/**/*.jld2
+
+tmp_local_map.json
