@@ -67,8 +67,12 @@ function set_activity_fields(access_token, activity_id, payload)
     return result
 end
 
-function prepend_activity_description(access_token, activity_data, str)
-    new_desc = "$str\n$(activity_data[:description])"
+function prepend_activity_description(access_token, activity_data, desc)
+    current_desc = activity_data[:description]
+    new_desc = desc
+    if !isnothing(current_desc)
+        new_desc = "$new_desc\n$current_desc"
+    end
     set_activity_fields(access_token, activity_data[:id], Dict(:description => strip(new_desc)))
 end
 
