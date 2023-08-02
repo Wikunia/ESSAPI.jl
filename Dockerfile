@@ -7,11 +7,9 @@ RUN apt update \
 
 WORKDIR /app
 
-COPY Project.toml .
+COPY . .
 
 RUN julia --project -e 'using Pkg; Pkg.instantiate()'
-
-COPY . .
 
 CMD ["julia", "--project", "src/rest.jl"]
 
