@@ -9,8 +9,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN julia --project -e 'using Pkg; Pkg.instantiate()'
-
-CMD ["julia", "--project", "src/rest.jl"]
+CMD ["/app/entrypoint.sh"]
 
 EXPOSE 8000/tcp
