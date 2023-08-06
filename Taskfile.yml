@@ -1,0 +1,64 @@
+version: '3'
+
+tasks:
+  network:create:
+    status:
+      - test "$(docker network ls -q -f name=ess-network)"
+    cmds:
+      - docker network create ess-network --driver bridge
+
+  volume:create:
+    status:
+      - test "$(docker volume ls -q -f name=ess-overlay-data)"
+      - test "$(docker volume ls -q -f name=ess-api-data)"
+    cmds:
+      - docker volume create ess-overlay-data
+      - docker volume create ess-api-data
+
+  basemap:restart:
+    cmds:
+      - cmd: docker stop ess-basemap
+        ignore_error: true
+      - cmd: docker rm ess-basemap
+        ignore_error: true
+      - >
+        docker run \
+          --detach \
+          --name ess-basemap \
+          --publish 8080:8080 \
+          --volume /home/ole/ess/data/overlay:/data \
+          --volume ess-overlay-data:/data \
+          maptiler/tileserver-gl \
+          -c /home/ole/ESSAPI.jl/config/basemap.json
+
+  overlay:restart:
+    cmds:
+      - cmd: docker stop ess-overlay
+        ignore_error: true
+      - cmd: docker rm ess-overlay
+        ignore_error: true
+      - >
+        docker run \
+          --detach \
+          --name ess-overlay \
+          --publish 8081:8080 \
+          --volume /home/ole/ess/data/overlay:/data \
+          --volume ess-overlay-data:/data \
+          maptiler/tileserver-gl \
+          -c /home/ole/ESSAPI.jl/config/overlay.json
+
+  api:restart:
+    cmds:
+      - cmd: docker stop ess-api
+        ignore_error: true
+      - cmd: docker rm ess-api
+        ignore_error: true
+      - >
+        docker run \
+          --detach \
+          --env-file "/home/ole/ess/env/.api" \
+          --name ess-api \
+          --publish 8000:8000 \
+          --volume /home/ole/ess/data/api:/data \
+          --volume ess-api-data:/data \
+          ghcr.io/wikunia/essapi.jl:jump-off
