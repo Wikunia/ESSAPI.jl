@@ -7,14 +7,6 @@ tasks:
     cmds:
       - docker network create ess-network --driver bridge
 
-  volume:create:
-    status:
-      - test "$(docker volume ls -q -f name=ess-overlay-data)"
-      - test "$(docker volume ls -q -f name=ess-api-data)"
-    cmds:
-      - docker volume create ess-overlay-data
-      - docker volume create ess-api-data
-
   basemap:restart:
     cmds:
       - cmd: docker stop ess-basemap
@@ -27,7 +19,6 @@ tasks:
           --name ess-basemap \
           --publish 8080:8080 \
           --volume /home/ole/ess/data/overlay:/data \
-          --volume ess-overlay-data:/data \
           maptiler/tileserver-gl \
           -c /home/ole/ESSAPI.jl/config/basemap.json
 
@@ -43,7 +34,6 @@ tasks:
           --name ess-overlay \
           --publish 8081:8080 \
           --volume /home/ole/ess/data/overlay:/data \
-          --volume ess-overlay-data:/data \
           maptiler/tileserver-gl \
           -c /home/ole/ESSAPI.jl/config/overlay.json
 
