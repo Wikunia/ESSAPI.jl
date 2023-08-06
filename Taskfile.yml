@@ -1,5 +1,9 @@
 version: '3'
 
+vars:
+  overlay_basemap_image: maptiler/tileserver-gl
+  api_image: ghcr.io/wikunia/essapi.jl:jump-off
+
 tasks:
   network:create:
     status:
@@ -7,7 +11,13 @@ tasks:
     cmds:
       - docker network create ess-network --driver bridge
 
+  images:pull:
+    cmds:
+      - docker pull {{.overlay_basemap_image}}
+      - docker pull {{.api_image}}
+
   basemap:restart:
+    deps: [images:pull]
     cmds:
       - cmd: docker stop ess-basemap
         ignore_error: true
@@ -19,10 +29,11 @@ tasks:
           --name ess-basemap \
           --publish 8080:8080 \
           --volume /home/ole/ess/data/overlay:/data \
-          maptiler/tileserver-gl \
+          {{.overlay_basemap_image}} \
           -c basemap-config.json
 
   overlay:restart:
+    deps: [images:pull]
     cmds:
       - cmd: docker stop ess-overlay
         ignore_error: true
@@ -34,10 +45,11 @@ tasks:
           --name ess-overlay \
           --publish 8081:8080 \
           --volume /home/ole/ess/data/overlay:/data \
-          maptiler/tileserver-gl \
+          {{.overlay_basemap_image}} \
           -c overlay-config.json
 
   api:restart:
+    deps: [images:pull]
     cmds:
       - cmd: docker stop ess-api
         ignore_error: true
@@ -50,4 +62,4 @@ tasks:
           --name ess-api \
           --publish 8000:8000 \
           --volume /home/ole/ess/data/api:/data \
-          ghcr.io/wikunia/essapi.jl:jump-off
+          {{.api_image}}
