@@ -50,5 +50,4 @@ tasks:
           --name ess-api \
           --publish 8000:8000 \
           --volume /home/ole/ess/data/api:/data \
-          --volume ess-api-data:/data \
           ghcr.io/wikunia/essapi.jl:jump-off
