@@ -1,5 +1,5 @@
 ---
-name: 'Publish Docker Image'
+name: 'Publish Tilemaker Docker Image'
 
 on:
   push:
@@ -8,9 +8,11 @@ on:
       - jump-off
     tags:
       - 'v*'
+    paths:
+      - 'tilemaker/**'
 
 jobs:
-  publish:
+  tilemaker-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -35,7 +37,7 @@ jobs:
       - name: publish docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./tilemaker
           push: true
           platforms: linux/arm64
-          tags: ghcr.io/wikunia/essapi.jl/ess-api:${{ github.ref_name }}
+          tags: ghcr.io/wikunia/essapi.jl/ess-tilemaker:${{ github.ref_name }}

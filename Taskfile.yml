@@ -2,7 +2,7 @@ version: 3
 
 vars:
   overlay_basemap_image: maptiler/tileserver-gl
-  api_image: ghcr.io/wikunia/essapi.jl:jump-off
+  api_image: ghcr.io/wikunia/essapi.jl/ess-api:jump-off
 
 tasks:
   network:create:
@@ -66,6 +66,10 @@ tasks:
           --restart unless-stopped \
           --volume /home/ole/ess/data/api:/data \
           {{.api_image}}
+
+  tilemaker:build:
+    cmds:
+      - cd ./tilemaker && docker build -t ess-tilemaker -f Dockerfile .
 
   ess:start:all:
     cmds:
