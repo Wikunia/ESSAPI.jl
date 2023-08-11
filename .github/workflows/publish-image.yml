@@ -3,6 +3,8 @@ name: 'Publish Docker Image'
 
 on:
   push:
+    paths:
+      - 'src/**'
     branches:
       - main
       - jump-off
