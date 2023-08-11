@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim AS build
+FROM --platform=aarch64 debian:bullseye-slim AS build
 
 LABEL Description="Tilemaker" Version="1.4.0"
 
@@ -38,7 +38,7 @@ RUN cmake -DTILEMAKER_BUILD_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COM
 RUN cmake --build .
 RUN strip tilemaker
 
-FROM debian:bullseye-slim
+FROM --platform=aarch64 debian:bullseye-slim
 
 WORKDIR /
 
