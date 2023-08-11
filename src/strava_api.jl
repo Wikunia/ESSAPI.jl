@@ -1,6 +1,6 @@
 function get_access_token(user_id)
     url = "https://www.strava.com/oauth/token"
-    refresh_token = readjson(joinpath(@__DIR__, "..", "data", "user_data", "$user_id.json"))[:refresh_token]
+    refresh_token = readjson(joinpath(DATA_FOLDER, "user_data", "$user_id.json"))[:refresh_token]
 
     payload = Dict(
         "client_id" => ENV["CLIENT_ID"],
@@ -48,7 +48,7 @@ function download_activity(user_id, access_token, activity_id, start_time)
     end
 
     save_data[:start_time] = start_time
-    path = joinpath(@__DIR__, "..", "data", "activities", "$user_id", "$activity_id.json")
+    path = joinpath(DATA_FOLDER, "activities", "$user_id", "$activity_id.json")
     mkpath(dirname(path))
     open(path, "w") do io
         JSON3.pretty(io, save_data)
@@ -81,10 +81,10 @@ function add_activity(user_id, activity_id)
     activity_data = get_activity_data(access_token, activity_id)
     start_time = activity_data[:start_date]
     download_activity(user_id, access_token, activity_id, start_time)
-
-    activity_path = joinpath(@__DIR__, "..", "data", "activities", "$user_id", "$activity_id.json")
-    user_data = readjson(joinpath(@__DIR__, "..", "data", "user_data", "$user_id.json"))
-    city_data_path = joinpath(@__DIR__, "..", "data", "city_data", "$user_id", "$(user_data[:city_name]).jld2")
+    
+    activity_path = joinpath(DATA_FOLDER, "activities", "$user_id", "$activity_id.json")
+    user_data = readjson(joinpath(DATA_FOLDER, "user_data", "$user_id.json"))
+    city_data_path = joinpath(DATA_FOLDER, "city_data", "$user_id", "$(user_data[:city_name]).jld2")
     city_data = load(city_data_path)
     data = EverySingleStreet.map_matching(activity_path, city_data["ways"], city_data["walked_parts"], "tmp_local_map.json")
 

@@ -9,7 +9,8 @@ using HTTP
 using Base.Threads
 
 DotEnv.config()
-VERIFY_TOKEN = ENV["VERIFY_TOKEN"]
+const VERIFY_TOKEN = ENV["VERIFY_TOKEN"]
+const DATA_FOLDER = ENV["DATA_FOLDER"]
 
 include("strava_api.jl")
 include("utils.jl")
@@ -25,7 +26,7 @@ end
 
 @post "/subscribe" function(req::HTTP.Request)
     data = json(req)
-    open(joinpath(@__DIR__, "..", "data", "pushs", "$(now()).json"), "w") do io
+    open(joinpath(DATA_FOLDER, "pushs", "$(now()).json"), "w") do io
         JSON3.pretty(io, data)
     end
     if data[:aspect_type] == "create" && data[:object_type] == "activity"
