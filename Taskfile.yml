@@ -1,4 +1,4 @@
-version: '3'
+version: 3
 
 vars:
   overlay_basemap_image: maptiler/tileserver-gl
@@ -17,8 +17,8 @@ tasks:
       - docker pull {{.api_image}}
 
   basemap:restart:
-    deps: [images:pull]
     cmds:
+      - task: images:pull
       - cmd: docker stop ess-basemap
         ignore_error: true
       - cmd: docker rm ess-basemap
@@ -33,8 +33,8 @@ tasks:
           -c basemap-config.json
 
   overlay:restart:
-    deps: [images:pull]
     cmds:
+      - task: images:pull
       - cmd: docker stop ess-overlay
         ignore_error: true
       - cmd: docker rm ess-overlay
@@ -49,8 +49,8 @@ tasks:
           -c overlay-config.json
 
   api:restart:
-    deps: [images:pull]
     cmds:
+      - task: images:pull
       - cmd: docker stop ess-api
         ignore_error: true
       - cmd: docker rm ess-api
@@ -63,3 +63,7 @@ tasks:
           --publish 8000:8000 \
           --volume /home/ole/ess/data/api:/data \
           {{.api_image}}
+
+  docker:logs:
+    cmds:
+      - docker ps -q | xargs -L 1 docker logs --tail=0 --follow --timestamps --details
