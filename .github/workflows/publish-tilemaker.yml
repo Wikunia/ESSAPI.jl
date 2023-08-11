@@ -3,13 +3,13 @@ name: 'Publish Tilemaker Docker Image'
 
 on:
   push:
+    paths:
+      - 'tilemaker/**'
     branches:
       - main
       - jump-off
     tags:
       - 'v*'
-    paths:
-      - 'tilemaker/**'
 
 jobs:
   tilemaker-publish:
