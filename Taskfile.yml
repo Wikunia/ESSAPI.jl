@@ -28,6 +28,7 @@ tasks:
           --detach \
           --name ess-basemap \
           --publish 8080:8080 \
+          --restart unless-stopped \
           --volume /home/ole/ess/data/overlay:/data \
           {{.overlay_basemap_image}} \
           -c basemap-config.json
@@ -44,6 +45,7 @@ tasks:
           --detach \
           --name ess-overlay \
           --publish 8081:8080 \
+          --restart unless-stopped \
           --volume /home/ole/ess/data/overlay:/data \
           {{.overlay_basemap_image}} \
           -c overlay-config.json
@@ -61,9 +63,17 @@ tasks:
           --env-file "/home/ole/ess/env/.api" \
           --name ess-api \
           --publish 8000:8000 \
+          --restart unless-stopped \
           --volume /home/ole/ess/data/api:/data \
           {{.api_image}}
 
+  ess:start:all:
+    cmds:
+      - task: network:create
+      - task: basemap:restart
+      - task: overlay:restart
+      - task: api:restart
+
   docker:logs:
     cmds:
-      - docker ps -q | xargs -L 1 docker logs --tail=0 --follow --timestamps --details
+      - docker ps -q | xargs -L 1 docker logs --tail=0 --follow --timestamps
