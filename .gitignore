@@ -18,7 +18,6 @@ docs/build/
 docs/site/
 
 .env
-data/**/*.json
-data/**/*.jld2
+data
 
 tmp_local_map.json
